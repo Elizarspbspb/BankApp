@@ -10,6 +10,7 @@ def index():
     # http://127.0.0.1:5000/?name=<script>alert(1)%</script>
     safe_input = escape(user_input)
     template = f"<h1>Добро пожаловать {safe_input}!</h1>"
+    template = f"<h1>Добро пожаловать {user_input}!</h1>"
     return render_template_string(template)
 
 if __name__ == '__main__':
