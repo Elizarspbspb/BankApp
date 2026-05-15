@@ -1,0 +1,348 @@
+body {
+  background: linear-gradient(135deg, #343a92, #6c5ce7, #343a92); /* Глубокий фиолетовый градиент */
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  color: #263238;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(52, 58, 146, 0.15); /* Тень в фиолетовых тонах */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Декоративный элемент — фиолетовая линия сверху */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #343a92, #6c5ce7, #343a92);
+}
+
+.message {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.textAdmin {
+  text-align: center;
+  color: #343a92; /* Глубокий фиолетовый */
+  padding: 25px 20px 15px;
+  margin: 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 600;
+}
+
+.textUser {
+  background-color: #f8f9fa;
+  color: #333;
+  padding: 10px 15px;
+  max-width: 80%;
+}
+
+h2 {
+  text-align: center;
+  color: #343a92; /* Глубокий фиолетовый */
+  padding: 25px 20px 15px;
+  margin: 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 600;
+}
+
+#chat-box {
+  height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+.message {
+  padding: 14px 20px;
+  border-radius: 22px;
+  max-width: 75%;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.message.admin {
+  align-self: flex-start;
+  background-color: #e1f5fe; /* Светлый фиолетовый оттенок */
+  color: #1e88e5;
+  border-top-left-radius: 8px;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #343a92; /* Тёмно-фиолетовый */
+  color: white;
+  border-top-right-radius: 8px;
+}
+
+#message-form {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+  background: linear-gradient(to bottom, #f8f9fa, #e9f0fc); /* Лёгкий фиолетовый градиент */
+}
+
+#message {
+  flex-grow: 1;
+  padding: 14px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 28px;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+#message:focus {
+  border-color: #6c5ce7; /* Яркий фиолетовый акцент */
+  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+}
+
+button {
+  background: linear-gradient(135deg, #343a92, #6c5ce7, #343a92); /* Фиолетовый градиент для кнопок */
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 28px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(52, 58, 146, 0.25); /* Тень в фиолетовых тонах */
+}
+
+button:hover {
+  background: linear-gradient(135deg, #1e88e5, #6c5ce7, #1e88e5); /* Углублённый градиент при наведении */
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(52, 58, 146, 0.3);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Стили для flash-сообщений */
+.flash-message {
+  padding: 12px 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.flash-success {
+  background-color: #e3f2fd; /* Светло-фиолетовый для успеха */
+  color: #1e88e5;
+  border: 1px solid #2196f3;
+}
+
+.flash-error {
+  background-color: #fff3f4;
+  color: #d50000;
+  border: 1px solid #ef5350;
+}
+
+/* Стили для формы авторизации */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #263238;
+}
+
+.auth-form input {
+  padding: 14px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 28px;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+.auth-form input:focus {
+  border-color: #6c5ce7; /* Фиолетовый акцент при фокусе */
+  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+}
+
+.hint {
+  font-size: 12px;
+  color: #546e7a;
+  margin-top: 4px;
+  padding-left: 8px;
+}
+
+/* Кнопка регистрации */
+.submit-btn {
+  background: linear-gradient(135deg, #343a92, #6c5ce7, #343a92); /* Фиолетовый градиент */
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 28px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  align-self: center;
+  width: fit-content;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(52, 58, 146, 0.25);
+}
+
+.submit-btn:hover {
+  background: linear-gradient(135deg, #1e88e5, #6c5ce7, #1e88e5); /* Градиент при наведении */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(52, 58, 146, 0.3);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Ссылка для входа */
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #546e7a;
+}
+
+.login-link a {
+  color: #343a92; /* Фиолетовый цвет ссылки */
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.login-link a:hover {
+  color: #6c5ce7; /* Более светлый фиолетовый при наведении */
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+/* Стили для placeholder в полях ввода */
+::placeholder {
+  color: #9fa8da; /* Светло‑фиолетовый для placeholder */
+  opacity: 0.8;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 480px) {
+  .container {
+    margin: 10px;
+    border-radius: 12px;
+  }
+  
+  .auth-form {
+    gap: 15px;
+  }
+  
+  h2 {
+    padding: 20px 15px 10px;
+    font-size: 22px;
+  }
+  
+  #chat-box {
+    height: 300px; /* Уменьшаем высоту чата на мобильных */
+  }
+  
+  .message {
+    max-width: 85%; /* Даём больше места на узких экранах */
+  }
+  
+  #message-form {
+    flex-direction: column; /* На мобильных — вертикальное расположение элементов формы */
+  }
+  
+  #message {
+    width: 100%; /* Поле ввода на всю ширину */
+    margin-bottom: 10px;
+  }
+  
+  button, .submit-btn {
+    width: 100%; /* Кнопки на всю ширину на мобильных */
+  }
+}
+
+/* Дополнительные стили для улучшения UX */
+/* Плавные переходы для всех интерактивных элементов */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Стили для скроллбара в чате (современный вид) */
+#chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat-box::-webkit-scrollbar-track {
+  background: #f1f3f8;
+  border-radius: 10px;
+}
+
+#chat-box::-webkit-scrollbar-thumb {
+  background: #9fa8da;
+  border-radius: 10px;
+}
+
+#chat-box::-webkit-scrollbar-thumb:hover {
+  background: #6c5ce7;
+}
+
+/* Анимация появления новых сообщений */
+.message {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Стиль для состояния загрузки или ожидания */
+.loading {
+  text-align: center;
+  padding: 10px;
+  color: #6c5ce7;
+  font-style: italic;
+}
+
+/* Улучшенные тени для ключевых элементов */
+.container,
+button,
+.submit-btn {
+  will-change: transform, box-shadow;
+}
+

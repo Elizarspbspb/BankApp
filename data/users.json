@@ -1,0 +1,26 @@
+{
+  "qwe": {
+    "email": "qwe@qwe",
+    "password": "scrypt:32768:8:1$9V632Vhut1nSZO6c$41d5d25c1431175ac7994f51aff8935c294fdbe65c4de40219a6a646747b3a5f8e87c8bb8de78cc9a9dd3ebe9c9ce7d701d523c721070e1902bf2cb5367be9f0"
+  },
+  "asd": {
+    "email": "asd@asd",
+    "password": "scrypt:32768:8:1$odlH5eS8qSkvD0cd$2b04f8f2323d76e5dd26d0c2e2952b33251f227874cf883774e43850c207b53504419172cd35fb9d37c8c23eb3a1cf9fcd069b8c8138a64ee9a01938ab418bd9"
+  },
+  "zxc": {
+    "email": "zxc@zxc",
+    "password": "scrypt:32768:8:1$anlBNcvwCsKTsbvz$291ee69b7044bbb21defd4c4f0781a2ebab90417ef3686dd639340251d2a342bfb2fac6dcaeea14f6761b467a11c1c0398962add0175032d10d17c729510fd63"
+  },
+  "elizar": {
+    "email": "elizar@app.sec",
+    "password": "scrypt:32768:8:1$MfzSEE1e8qpz3tve$de21ee0c24491a7e6b73567f98de2c4be9de096da4b82d67f9a23ef8e29b9766eca1844150420681bf5faa632024302ee17838d531f4cde4997270c90e6a9ebd"
+  },
+  "123": {
+    "email": "123@123",
+    "password": "scrypt:32768:8:1$kJN0HyKL70iw8Wtm$95633943b3617b5149f51d258f2a0f2551b2fdde2c9fbbd63969bc4b55259be6745e5df5b198cd52e0fd7e8340da836204bb422601882ba747e2dea1746465f1"
+  },
+  "<script>alert(1)</script>": {
+    "email": "<script>alert(1)</script>@asd",
+    "password": "scrypt:32768:8:1$SyHhr0NUunqZt5Sz$a6f45a3972f7e7a0c83015bdd94618a198f61b1411cc4af4695538fde30bec58434b1af88deca770f990da84b86d0ce90a3d8cfbc37046be04a1c4e9dc97cb11"
+  }
+}
