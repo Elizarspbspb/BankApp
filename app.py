@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from database import get_user_by_username, create_user, get_password_by_password_hash, get_or_create_dialog, add_message_to_dialog, get_dialog_messages, get_admin_dialogs, close_dialog, get_dialog_info
+#from database import get_user_by_username, create_user, get_password_by_password_hash, get_or_create_dialog, add_message_to_dialog, get_dialog_messages, get_admin_dialogs, close_dialog, get_dialog_info
+from database import get_user_by_username, create_user, get_password_by_password_hash, get_or_create_dialog, add_message_to_dialog, get_dialog_messages
 #from session_manager import create_session, get_session_data
 
 #import secrets      # CSRF-token
@@ -15,6 +16,8 @@ from markupsafe import escape, Markup   # Энкодинг - новая верс
 app = Flask(__name__)
 app.secret_key = '6G6A906SBHP7@J0KX0'  #  — заменить 
     
+# python sqlmap.py -u http://127.0.0.1:5000/login --batch --banner --data="username=123&password=12345678" --cookie="session=eyJ1c2VybmFtZSI6IjEyMyJ9.agrbmQ.Kb_CWePMO6r7YolX80hr_mZPGIc" --tables
+
 @app.route('/')
 def index():
     #if 'username' in session: !!! Риск подмены сессии, зная имя пользователя
@@ -51,6 +54,7 @@ def register():
 
 # Не протестировано
 @app.route('/login', methods=['GET', 'POST'])
+#@app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
@@ -68,6 +72,7 @@ def login():
         return render_template('login.html')
     return render_template('login.html')
 
+# sqlmap.py -u http://127.0.0.1:5000/chat --batch --banner --data="username=123" --cookie="session=eyJ1c2VybmFtZSI6IjEyMyJ9.agrbmQ.Kb_CWePMO6r7YolX80hr_mZPGIc" --level=3 --method=GET --tables
 @app.route('/chat', methods=['GET'])
 def chat():
     if 'username' not in session:
@@ -95,7 +100,10 @@ def chat():
     messages = get_dialog_messages(dialog_id)
     #return render_template('chat.html', username=username, messages=messages, dialog_id=dialog_id, csrf=csrf)
     return render_template('chat.html', username=username, messages=messages, dialog_id=dialog_id)
-                         
+
+#python sqlmap.py -u http://127.0.0.1:5000/send --batch --banner --data="username=123&password=12345678" --level=3 --method=POST --tables              
+# python sqlmap.py -u http://127.0.0.1:5000/send --batch --banner --data="username=123&password=12345678" --level=3 --method=POST --tables --data="message=sqlmap"
+# рабочая нагрузка, но защита работает - python sqlmap.py -u http://127.0.0.1:5000/send --batch --banner --data="username=123&password=12345678&message=sqlmap2" --level=1 --method=POST --tables
 @app.route('/send', methods=['POST'])
 def send():
     if 'username' not in session:

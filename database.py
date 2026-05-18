@@ -7,6 +7,7 @@ import bleach                       # Санитизация
 
 DB_FILE = 'data/database.db'
 
+# Старт базы данных
 def init_db():
     # Создание подключения к базе данных
     connection = sqlite3.connect(DB_FILE)
@@ -57,6 +58,7 @@ def init_db():
     # Закрываем соединение
     connection.close()
 
+# Регисстрация, Вход, Активная сессия
 def get_user_by_username(username):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -65,6 +67,7 @@ def get_user_by_username(username):
     conn.close()
     return user
 
+# Вход
 def get_password_by_password_hash(username):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -76,6 +79,7 @@ def get_password_by_password_hash(username):
 
     return pass_hash[0]  # Возвращаем первый элемент кортежа (строку хеша)
     
+# Регисстрация
 def create_user(username, email, password_hash):
     try:
         conn = sqlite3.connect(DB_FILE, timeout=10)
@@ -88,6 +92,7 @@ def create_user(username, email, password_hash):
         return False  # Пользователь с таким именем уже существует
 
 # Поиск/создание диалога
+# Активная сессия
 def get_or_create_dialog(user_id, admin_id=None):
     """
     Получает активный диалог пользователя с администратором.
@@ -115,8 +120,7 @@ def get_or_create_dialog(user_id, admin_id=None):
     else:
         # Создаём новый диалог... правда нет остальных параметров таблицы
         cursor.execute(
-            'INSERT INTO dialogs (user_id, admin_id) VALUES (?, ?)',
-            (user_id, admin_id)
+            'INSERT INTO dialogs (user_id, admin_id) VALUES (?, ?)', (user_id, admin_id)
         )
         dialog_id = cursor.lastrowid
         # полезная нагрузка для выполнения уязвимости
@@ -134,6 +138,7 @@ def get_or_create_dialog(user_id, admin_id=None):
     return dialog_id
 
 # Добавление сообщения в диалог    
+# Активная сессия
 def add_message_to_dialog(dialog_id, user_id, content):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -144,13 +149,13 @@ def add_message_to_dialog(dialog_id, user_id, content):
 
     # Обновляем время последнего сообщения в диалоге
     cursor.execute(
-        'UPDATE dialogs SET last_message_at = CURRENT_TIMESTAMP WHERE id = ?',
-        (dialog_id,)
+        'UPDATE dialogs SET last_message_at = CURRENT_TIMESTAMP WHERE id = ?', (dialog_id,)
     )
     conn.commit()
     conn.close()
 
 # Получение сообщений диалога  
+# Активная сессия
 def get_dialog_messages(dialog_id):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
@@ -191,7 +196,7 @@ def get_admin_dialogs(admin_id):
     conn.close()
     return dialogs
 """
-    
+
 # Закрытие диалога
 """
 def close_dialog(dialog_id):
