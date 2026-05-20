@@ -7,6 +7,9 @@ import bleach                       # Санитизация
 
 DB_FILE = 'data/database.db'
 
+# Активные нагрузки тестирования защищенности
+# python sqlmap.py -u http://127.0.0.1:5000/send --batch --banner --data="username=123&password=12345678&message=sqlmap2" --level=1 --method=POST --tables
+
 # Старт базы данных
 def init_db():
     # Создание подключения к базе данных
@@ -142,6 +145,7 @@ def get_or_create_dialog(user_id, admin_id=None):
 def add_message_to_dialog(dialog_id, user_id, content):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
+    # Параметризованный запрос
     cursor.execute(
         'INSERT INTO messages (dialog_id, user_id, content) VALUES (?, ?, ?)',
         (dialog_id, user_id, content)

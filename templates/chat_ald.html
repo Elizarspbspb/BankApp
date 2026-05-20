@@ -45,19 +45,10 @@
   	</div>
 
 	<!-- Для демонстрации сохраненной XSS - <script>alert(1)</script> -->
-  	<!--<form id="message-form" action="/send" method="post">-->
-	<form id="message-form" action="/send" method="post" enctype="multipart/form-data">
+  	<form id="message-form" action="/send" method="post">
 		<input type="hidden" name="dialog_id" value="{{ dialog_id }}">    	
 		<input type="text" id="message" name="message" placeholder="Введите сообщение" required>
-		
-		<!-- Блок загрузки файла -->
-		<div class="file-upload">
-			<label for="file-input" class="file-label">Прикрепить файл</label>
-			<input type="file" id="file-input" name="file" class="file-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.svg">
-			<span id="file-name" class="file-name">Файл не выбран</span>
-		</div>
-  
-		<!--<input type="hidden" name="csrf_token" value="{{csrf}}">-->
+		<input type="hidden" name="csrf_token" value="{{csrf}}">
     	<button type="submit">Отправить</button>
   	</form>
 

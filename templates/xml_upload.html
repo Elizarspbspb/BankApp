@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+    <title>Отправка XML-файла параметров пользователя</title>
+	<link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <h1>Загрузите XML-файл для обработки</h1>
+    <p>Пожалуйста, отправьте корректный XML-файл. Максимальный размер — 1 MB.</p>
+    
+    <!--<form id="xml-form" action="/xml_upload" method="get" enctype="multipart/form-data">-->
+	<form id="xml-form" action="/send_xml" method="post" enctype="multipart/form-data">
+        <label for="xmlFile">Выберите XML-файл:</label>
+        <input type="file" id="xmlFile" name="xmlFile" accept=".xml" required>
+        <br><br>
+        <button type="submit">Отправить XML</button>
+    </form>
+</body>
+</html>

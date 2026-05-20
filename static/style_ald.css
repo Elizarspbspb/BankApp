@@ -138,33 +138,6 @@ button:active {
   transform: translateY(0);
 }
 
-/* Стили для кнопки загрузки */
-.file-upload {
-  margin: 10px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.file-label {
-  background: #007bff;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.file-input {
-  display: none;
-}
-
-.file-name {
-  font-size: 12px;
-  color: #666;
-  flex-grow: 1;
-}
-
 /* Стили для flash-сообщений */
 .flash-message {
   padding: 12px 20px;
