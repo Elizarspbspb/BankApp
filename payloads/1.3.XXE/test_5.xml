@@ -1,0 +1,4 @@
+<!DOCTYPE data [
+  <!ENTITY xxe SYSTEM "file:///C:/Windows/win.ini">
+]>
+<result><![CDATA[&xxe;]]></result>

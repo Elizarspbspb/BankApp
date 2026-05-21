@@ -1,0 +1,5 @@
+<!DOCTYPE data [
+  <!ENTITY % start "<!ENTITY xxe SYSTEM 'file:///C:/Windows/win.ini'>">
+  %start;
+]>
+<result>&xxe;</result>

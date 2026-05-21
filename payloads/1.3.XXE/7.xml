@@ -1,0 +1,1 @@
+<!DOCTYPE test [<!ENTITY test "SIMPLE_TEST">]><root>&test;</root>

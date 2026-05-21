@@ -1,0 +1,7 @@
+<!DOCTYPE test [
+  <!ENTITY test "MARKER_START_TEST_MARKER_END">
+]>
+<root>
+  <debug>Entity test: &test;</debug>
+  <original>&test;</original>
+</root>

