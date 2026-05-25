@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 #from database import get_user_by_username, create_user, get_password_by_password_hash, get_or_create_dialog, add_message_to_dialog, get_dialog_messages, get_admin_dialogs, close_dialog, get_dialog_info
@@ -354,4 +356,5 @@ def logout():
     return redirect(url_for('login'))
 '''
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
+    #app.run(debug=True)
